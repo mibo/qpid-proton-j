@@ -257,8 +257,15 @@ public class Driver extends BaseHandler
 
         Connector(Connection conn) throws IOException {
             super(SocketChannel.open(), SelectionKey.OP_CONNECT, makeTransport(conn));
-            System.out.println("CONNECTING: " + conn.getHostname());
-            socket.connect(new InetSocketAddress(conn.getHostname(), 5672));
+            String host = conn.getHostname();
+            int port = 5672;
+            if(host.contains(":")) {
+               String[] parts = host.split(":", 2);
+               host = parts[0];
+               port = Integer.parseInt(parts[1]);
+            }
+            System.out.println("CONNECTING: " + host + ":" + port);
+            socket.connect(new InetSocketAddress(host, port));
         }
     }
 
